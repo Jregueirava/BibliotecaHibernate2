@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.2"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+                                 http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+    <persistence-unit name="biblioteca" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <!-- Aqui incluimos as clases do modelo que imos anotar e persistir -->
+        <class>com.biblioteca.model.Usuario</class>
+
+        <properties>
+            <!-- Configuración para MariaDB -->
+            <!-- O servidor de bases de datos, a base de datos, o usuario e o contrasinal teñen que coincidir -->
+            <!-- con que informamos no Docker -->
+            <property name="javax.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mariadb://localhost:3306/biblioteca"/>
+            <property name="javax.persistence.jdbc.user" value="testuser"/>
+            <property name="javax.persistence.jdbc.password" value="testpass"/>
+
+            <!-- Configuración de Hibernate para MariaDB -->
+            <!--
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
+            -->
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+
+            <!-- Opcionais para mellor rendemento -->
+            <property name="hibernate.connection.pool_size" value="10"/>
+            <property name="hibernate.jdbc.batch_size" value="20"/>
+            <!-- Opcional: Quitar el warning de SLF4J -->
+           <!-- <property name="hibernate.logger.slf4j.log_level" value="WARN"/> -->
+        </properties>
+    </persistence-unit>
+</persistence>

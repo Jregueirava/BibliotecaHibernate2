@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:11
+    container_name: mariadbHibernate
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      #testdb
+      MYSQL_DATABASE: biblioteca
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: phpmyadminHibernate
+    restart: always
+    depends_on:
+      - mariadb
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+    ports:
+      - "8081:80"
+
+  javaapp:
+    build: .
+    container_name: javaappHibernate
+    depends_on:
+      - mariadb
+    environment:
+      DB_URL: jdbc:mariadb://mariadb:3306/biblioteca
+      DB_USER: testuser
+      DB_PASS: testpass
