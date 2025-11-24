@@ -31,7 +31,7 @@ public class Usuario {
     @Column(name = "fecha_nacimiento")
     private LocalDate fecha_nacimiento;
 
-    @Column(name = "fecha_reistro")
+    @Column(name = "fecha_registro")
     private LocalDateTime fecha_registro;
 
     public Usuario(String dni, String nombre, String apellidos, String email) {

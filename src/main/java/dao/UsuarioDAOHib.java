@@ -33,8 +33,7 @@ public class UsuarioDAOHib implements UsuarioDAO{
     @Override
     public Optional<Usuario> buscarPorId(int id) {
         Usuario u = entityManager.find(Usuario.class, id);
-        Optional<Usuario> usuarioORec = Optional.empty();
-        return usuarioORec;
+        return Optional.ofNullable(u);
     }
 
     @Override
@@ -50,7 +49,7 @@ public class UsuarioDAOHib implements UsuarioDAO{
                 tran.rollback();
                 return u;
             }
-            throw new RuntimeException("Error al mpodificar usuario" + e);
+            throw new RuntimeException("Error al modificar usuario" + e);
         }
     }
 
