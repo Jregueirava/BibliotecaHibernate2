@@ -268,10 +268,10 @@ import java.util.Optional;
 
 public interface AutorDAO {
 
-    boolean crearAutor(Autor autor);
+    boolean crearAutor(Autor a);  // TU estilo: variable corta
     Optional<Autor> buscarPorId(int id);
-    Autor actualizarAutor(Autor autor);
-    boolean eliminarAutor(Autor autor);
+    Autor actualizarAutor(Autor a);  // TU estilo: variable corta
+    boolean eliminarAutor(Autor a);  // TU estilo: variable corta
 }
 ```
 
@@ -294,11 +294,11 @@ public class AutorDAOHib implements AutorDAO {
     }
 
     @Override
-    public boolean crearAutor(Autor autor) {
-        EntityTransaction tran = entityManager.getTransaction();
+    public boolean crearAutor(Autor a) {  // TU estilo: Autor a
+        EntityTransaction tran = entityManager.getTransaction();  // TU estilo: tran
         try {
             tran.begin();
-            entityManager.persist(autor);
+            entityManager.persist(a);
             tran.commit();
             return true;
         } catch (Exception e) {
@@ -311,16 +311,16 @@ public class AutorDAOHib implements AutorDAO {
 
     @Override
     public Optional<Autor> buscarPorId(int id) {
-        Autor autor = entityManager.find(Autor.class, id);
-        return Optional.ofNullable(autor);
+        Autor a = entityManager.find(Autor.class, id);  // TU estilo: Autor a
+        return Optional.ofNullable(a);
     }
 
     @Override
-    public Autor actualizarAutor(Autor autor) {
-        EntityTransaction tran = entityManager.getTransaction();
+    public Autor actualizarAutor(Autor a) {  // TU estilo: Autor a
+        EntityTransaction tran = entityManager.getTransaction();  // TU estilo: tran
         try {
             tran.begin();
-            Autor autorActualizado = entityManager.merge(autor);
+            Autor autorActualizado = entityManager.merge(a);
             tran.commit();
             return autorActualizado;
         } catch (Exception e) {
@@ -332,13 +332,13 @@ public class AutorDAOHib implements AutorDAO {
     }
 
     @Override
-    public boolean eliminarAutor(Autor autor) {
-        EntityTransaction tran = entityManager.getTransaction();
+    public boolean eliminarAutor(Autor a) {  // TU estilo: Autor a
+        EntityTransaction tran = entityManager.getTransaction();  // TU estilo: tran
         try {
             tran.begin();
-            Autor autorEncontrado = entityManager.find(Autor.class, autor.getId());
-            if (autorEncontrado != null) {
-                entityManager.remove(autorEncontrado);
+            Autor autorEnc = entityManager.find(Autor.class, a.getId());  // TU estilo: autorEnc
+            if (autorEnc != null) {
+                entityManager.remove(autorEnc);
                 tran.commit();
                 return true;
             }
@@ -557,55 +557,473 @@ enum EstadoEjemplar {
 
 ---
 
-## Ejemplo de uso en App.java
+## IMPORTANTE: Tu estilo vs. el estilo del profesor
+
+### 📝 Análisis de tu código actual:
+
+Has desarrollado tu propio estilo de programación que es **válido y funcional**, pero difiere del profesor en algunos aspectos. Aquí está la comparación:
+
+#### 1. **Nombres de métodos en los DAOs**
+
+**TU ESTILO (el que ya usas):**
+```java
+boolean crearAutor(Autor a);
+Autor actualizarAutor(Autor a);
+boolean eliminarAutor(Autor a);  // ← Recibe objeto completo
+```
+
+**ESTILO DEL PROFESOR:**
+```java
+boolean crear(Autor autor);
+Autor actualizar(Autor autor);
+boolean eliminar(int id);  // ← OJO: recibe solo ID, no el objeto completo
+```
+
+**¿Qué hacer?**
+- **Opción 1:** Mantén tu estilo (es válido, funciona igual de bien)
+- **Opción 2:** Cambia al estilo del profesor para que coincida exactamente con su solución
+
+**RECOMENDACIÓN:** Si el profesor va a comparar tu código con su solución, considera cambiar al menos el método `eliminar()` para que reciba `int id` en lugar del objeto completo.
+
+#### 2. **Nombres de variables**
+
+**TU ESTILO:**
+```java
+Autor a              // Variable corta
+Usuario u
+EntityTransaction tran       // "tran" en lugar de "tx"
+Usuario usuarioEnc           // Nombres descriptivos en español
+Autor autorActualizado
+```
+
+**ESTILO DEL PROFESOR:**
+```java
+Autor autor          // Variable con nombre completo
+Categoria categoria
+EntityTransaction tx          // "tx" abreviado
+Autor autorEncontrado        // Nombres en español pero más largos
+Autor actualizado
+```
+
+**Conclusión:** Ambos estilos son válidos. Tu estilo es más conciso, el del profesor es más explícito.
+
+#### 3. **Implementación del método eliminar**
+
+**TU IMPLEMENTACIÓN ACTUAL (recibe objeto):**
+```java
+@Override
+public boolean eliminarAutor(Autor a) {
+    EntityTransaction tran = entityManager.getTransaction();
+    try {
+        tran.begin();
+        Autor autorEnc = entityManager.find(Autor.class, a.getId());
+        if (autorEnc != null) {
+            entityManager.remove(autorEnc);
+            tran.commit();
+            return true;
+        }
+        return false;
+    } catch (Exception e) {
+        if (tran.isActive()) {
+            tran.rollback();
+            return false;
+        }
+        throw new RuntimeException("Error al eliminar autor" + e);
+    }
+}
+```
+
+**IMPLEMENTACIÓN DEL PROFESOR (recibe ID):**
+```java
+@Override
+public boolean eliminar(int id) {
+    EntityTransaction tx = entityManager.getTransaction();
+    try {
+        tx.begin();
+        Autor autor = entityManager.find(Autor.class, id);
+        if (autor != null) {
+            entityManager.remove(autor);
+            tx.commit();
+            return true;
+        }
+    } catch (Exception e) {
+        if (tx.isActive()) tx.rollback();
+    }
+    return false;
+}
+```
+
+**Diferencias clave:**
+- Tu método: `eliminarAutor(Autor a)` - recibe objeto, extrae el ID
+- Profesor: `eliminar(int id)` - recibe directamente el ID
+- Ambos funcionan, pero la del profesor es más simple
+
+#### 4. **Ubicación de los ENUMs**
+
+**Ambos estilos funcionan:**
+- **Opción 1:** ENUM dentro de la clase de la entidad (como hace el profesor)
+- **Opción 2:** ENUM en archivo separado (también válido)
+
+**ENUM dentro de la clase:**
+```java
+@Entity
+@Table(name = "ejemplar")
+public class Ejemplar {
+    // ... atributos
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="estado", nullable = false)
+    private EstadoEjemplar estado = EstadoEjemplar.DISPONIBLE;
+
+    // Enum dentro de la clase
+    public enum EstadoEjemplar {
+        DISPONIBLE, PRESTADO, MANTENIMIENTO
+    }
+
+    // ... resto del código
+}
+```
+
+**Recomendación:** Sigue el estilo del profesor (ENUM dentro de la clase) para las entidades Ejemplar y Prestamo.
+
+---
+
+## La clase App.java - Explicación detallada
+
+### ¿Qué es App.java?
+
+`App.java` es tu **clase principal de pruebas**. Es donde:
+1. Creas el `EntityManager`
+2. Instancias los DAOs
+3. Pruebas las operaciones CRUD de cada entidad
+
+### Estructura básica de App.java
 
 ```java
-// Crear EntityManager
-EntityManagerFactory emf = Persistence.createEntityManagerFactory("biblioteca");
-EntityManager em = emf.createEntityManager();
+import dao.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Persistence;
+import modelo.*;
+import org.slf4j.bridge.SLF4JBridgeHandler;
+import java.util.Optional;
 
-// Crear DAOs
-AutorDAO autorDAO = new AutorDAOHib(em);
+public class App {
+    public static void main(String[] args) {
+        // 1. Configuración de logs (reduce mensajes en consola)
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
 
-// Crear un autor
-Autor autor = new Autor("Gabriel García Márquez", "Colombiana");
-boolean creado = autorDAO.crearAutor(autor);
+        // 2. Crear EntityManager con try-with-resources
+        //    Se cierra automáticamente al finalizar
+        try (EntityManager em = Persistence
+                .createEntityManagerFactory("biblioteca")  // ← nombre en persistence.xml
+                .createEntityManager()) {
 
-// Buscar por ID
-Optional<Autor> autorEncontrado = autorDAO.buscarPorId(1);
-if (autorEncontrado.isPresent()) {
-    System.out.println(autorEncontrado.get());
+            // 3. Crear DAOs (uno por cada entidad)
+            UsuarioDAO usuarioDAO = new UsuarioDAOHib(em);
+            AutorDAO autorDAO = new AutorDAOHib(em);
+            CategoriaDAO categoriaDAO = new CategoriaDAOHib(em);
+            // ... etc
+
+            // 4. Aquí van las pruebas CRUD
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
-
-// Actualizar
-if (autorEncontrado.isPresent()) {
-    Autor a = autorEncontrado.get();
-    a.setNacionalidad("Colombia");
-    autorDAO.actualizarAutor(a);
-}
-
-// Eliminar
-if (autorEncontrado.isPresent()) {
-    autorDAO.eliminarAutor(autorEncontrado.get());
-}
-
-// Cerrar
-em.close();
-emf.close();
 ```
+
+---
+
+## Enfoque progresivo: Desarrollar App.java paso a paso
+
+**NO necesitas comentar código durante el desarrollo.** Vas construyendo `App.java` progresivamente conforme completas cada entidad.
+
+### 📅 PASO 1: Solo tienes Usuario y Autor (Estado actual de tu proyecto)
+
+**App.java SIMPLE - Como el ejemplo del profesor:**
+
+```java
+import dao.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Persistence;
+import modelo.*;
+import org.slf4j.bridge.SLF4JBridgeHandler;
+import java.util.Optional;
+
+public class App {
+    public static void main(String[] args) {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+
+        try(EntityManager em = Persistence
+                .createEntityManagerFactory("biblioteca")
+                .createEntityManager()){
+
+            // Crear DAOs
+            UsuarioDAO usuarioDAO = new UsuarioDAOHib(em);
+            AutorDAO autorDAO = new AutorDAOHib(em);
+
+            // PRUEBA USUARIO (ya existe en tu código)
+            Optional<Usuario> usuarioOptional = usuarioDAO.buscarPorId(1);
+            if(usuarioOptional.isPresent()){
+                System.out.println("====USUARIO ENCONTRADO====");
+                System.out.println(usuarioOptional.get());
+            } else {
+                System.out.println("====USUARIO NO ENCONTRADO====");
+            }
+
+            // PRUEBA AUTOR - Simple como la de Usuario
+            Optional<Autor> autorOptional = autorDAO.buscarPorId(1);
+            if(autorOptional.isPresent()){
+                System.out.println("====AUTOR ENCONTRADO====");
+                System.out.println(autorOptional.get());
+            } else {
+                System.out.println("====AUTOR NO ENCONTRADO====");
+            }
+
+            System.out.println("Programa de prueba finalizado");
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```
+
+**Nota importante:** El ejercicio pide **implementar** los métodos CRUD en el DAO, pero **NO dice que tengas que probarlos todos en App.java**. La clase App.java es solo una prueba simple (como `buscarPorId()`) para demostrar que el DAO funciona.
+
+### 📅 PASO 2: Acabas de completar Categoria
+
+**Añades a App.java (solo la prueba simple):**
+
+```java
+// En la sección de DAOs:
+CategoriaDAO categoriaDAO = new CategoriaDAOHib(em);  // ← NUEVO
+
+// Añades después de las pruebas de Usuario y Autor:
+
+// PRUEBA CATEGORIA - Simple como las anteriores
+Optional<Categoria> categoriaOptional = categoriaDAO.buscarPorId(1);
+if(categoriaOptional.isPresent()){
+    System.out.println("====CATEGORIA ENCONTRADA====");
+    System.out.println(categoriaOptional.get());
+} else {
+    System.out.println("====CATEGORIA NO ENCONTRADA====");
+}
+```
+
+### 📅 PASO 3: Completar Libro (con claves foráneas)
+
+**Añades a App.java:**
+
+```java
+// En la sección de DAOs:
+LibroDAO libroDAO = new LibroDAOImpl(em);  // ← NUEVO
+
+// PRUEBA LIBRO - Simple
+Optional<Libro> libroOptional = libroDAO.buscarPorId(1);
+if(libroOptional.isPresent()){
+    System.out.println("====LIBRO ENCONTRADO====");
+    System.out.println(libroOptional.get());
+} else {
+    System.out.println("====LIBRO NO ENCONTRADO====");
+}
+```
+
+**Nota:** Para que funcione esta prueba, necesitas tener datos en la base de datos. Libro tiene claves foráneas (`autor_id`, `categoria_id`), así que asegúrate de tener autores y categorías creados primero en la BD.
+
+### 📅 PASO 4: Completar Ejemplar (con ENUM)
+
+**Añades a App.java:**
+
+```java
+// En la sección de DAOs:
+EjemplarDAO ejemplarDAO = new EjemplarDAOHib(em);  // ← NUEVO
+
+// PRUEBA EJEMPLAR - Simple
+Optional<Ejemplar> ejemplarOptional = ejemplarDAO.buscarPorId(1);
+if(ejemplarOptional.isPresent()){
+    System.out.println("====EJEMPLAR ENCONTRADO====");
+    System.out.println(ejemplarOptional.get());
+} else {
+    System.out.println("====EJEMPLAR NO ENCONTRADO====");
+}
+```
+
+### 📅 PASO 5: Completar Prestamo
+
+**Añades a App.java:**
+
+```java
+// En la sección de DAOs:
+PrestamoDAO prestamoDAO = new PrestamoDAOHib(em);  // ← NUEVO
+
+// PRUEBA PRESTAMO - Simple
+Optional<Prestamo> prestamoOptional = prestamoDAO.buscarPorId(1);
+if(prestamoOptional.isPresent()){
+    System.out.println("====PRESTAMO ENCONTRADO====");
+    System.out.println(prestamoOptional.get());
+} else {
+    System.out.println("====PRESTAMO NO ENCONTRADO====");
+}
+```
+
+---
+
+## App.java COMPLETO - Versión final simple
+
+Una vez que tengas **todas las entidades completadas** (Autor, Categoria, Libro, Ejemplar, Prestamo), tu `App.java` quedaría así:
+
+```java
+import dao.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Persistence;
+import modelo.*;
+import org.slf4j.bridge.SLF4JBridgeHandler;
+
+import java.util.Optional;
+
+public class App {
+
+    public static void main(String[] args) {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+
+        try (EntityManager em = Persistence
+                .createEntityManagerFactory("biblioteca")
+                .createEntityManager()) {
+
+            // Crear todos los DAOs
+            UsuarioDAO usuarioDAO = new UsuarioDAOHib(em);
+            AutorDAO autorDAO = new AutorDAOHib(em);
+            CategoriaDAO categoriaDAO = new CategoriaDAOHib(em);
+            LibroDAO libroDAO = new LibroDAOImpl(em);
+            EjemplarDAO ejemplarDAO = new EjemplarDAOHib(em);
+            PrestamoDAO prestamoDAO = new PrestamoDAOHib(em);
+
+            // Pruebas simples - Solo buscarPorId() como el ejemplo del profesor
+
+            // USUARIO
+            Optional<Usuario> usuarioOptional = usuarioDAO.buscarPorId(1);
+            if(usuarioOptional.isPresent()){
+                System.out.println("====USUARIO ENCONTRADO====");
+                System.out.println(usuarioOptional.get());
+            } else {
+                System.out.println("====USUARIO NO ENCONTRADO====");
+            }
+
+            // AUTOR
+            Optional<Autor> autorOptional = autorDAO.buscarPorId(1);
+            if(autorOptional.isPresent()){
+                System.out.println("====AUTOR ENCONTRADO====");
+                System.out.println(autorOptional.get());
+            } else {
+                System.out.println("====AUTOR NO ENCONTRADO====");
+            }
+
+            // CATEGORIA
+            Optional<Categoria> categoriaOptional = categoriaDAO.buscarPorId(1);
+            if(categoriaOptional.isPresent()){
+                System.out.println("====CATEGORIA ENCONTRADA====");
+                System.out.println(categoriaOptional.get());
+            } else {
+                System.out.println("====CATEGORIA NO ENCONTRADA====");
+            }
+
+            // LIBRO
+            Optional<Libro> libroOptional = libroDAO.buscarPorId(1);
+            if(libroOptional.isPresent()){
+                System.out.println("====LIBRO ENCONTRADO====");
+                System.out.println(libroOptional.get());
+            } else {
+                System.out.println("====LIBRO NO ENCONTRADO====");
+            }
+
+            // EJEMPLAR
+            Optional<Ejemplar> ejemplarOptional = ejemplarDAO.buscarPorId(1);
+            if(ejemplarOptional.isPresent()){
+                System.out.println("====EJEMPLAR ENCONTRADO====");
+                System.out.println(ejemplarOptional.get());
+            } else {
+                System.out.println("====EJEMPLAR NO ENCONTRADO====");
+            }
+
+            // PRESTAMO
+            Optional<Prestamo> prestamoOptional = prestamoDAO.buscarPorId(1);
+            if(prestamoOptional.isPresent()){
+                System.out.println("====PRESTAMO ENCONTRADO====");
+                System.out.println(prestamoOptional.get());
+            } else {
+                System.out.println("====PRESTAMO NO ENCONTRADO====");
+            }
+
+            System.out.println("\nPrograma de prueba finalizado");
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```
+
+**Nota:** Este App.java solo hace **pruebas simples con `buscarPorId(1)`** de cada entidad, como el ejemplo del profesor. El ejercicio pide **implementar los métodos CRUD en los DAOs**, pero no requiere probarlos todos en App.java.
+
+---
+
+## 🎯 Cómo usar App.java durante el desarrollo
+
+**Enfoque simple - Como el profesor:**
+
+1. **Completas una entidad** (modelo + DAO + DAOImpl)
+2. **Añades el DAO a App.java** en la sección de creación de DAOs
+3. **Añades una prueba simple** `buscarPorId(1)` de esa entidad
+4. **Ejecutas** el programa para verificar que funciona
+5. **Repites** para la siguiente entidad
+
+**Ventajas:**
+- Código simple y claro, como el del profesor
+- Fácil de ejecutar y probar
+- No necesitas comentar/descomentar código
+- Solo necesitas tener datos con ID=1 en la base de datos para probar
+
+**¿Qué pasa si no tengo datos en la BD?**
+- El programa mostrará "NO ENCONTRADO" para esas entidades
+- Puedes insertar datos manualmente en la BD con MySQL Workbench/phpMyAdmin
+- O puedes hacer una prueba temporal del método `crear()` en App.java para insertar datos
 
 ---
 
 ## Conclusión
 
+### Pasos para completar el proyecto:
+
 Para cada una de las 5 entidades (Autor, Categoria, Libro, Ejemplar, Prestamo):
 
-1. Crea la clase de entidad con todas sus anotaciones
-2. Crea la interfaz DAO con los 4 métodos CRUD
-3. Implementa la interfaz usando EntityManager
-4. Sigue el patrón de Usuario que ya existe en tu proyecto
+1. **Crea la clase de entidad** en `modelo/` con todas sus anotaciones JPA
+2. **Crea la interfaz DAO** en `dao/` con los 4 métodos CRUD:
+   - `boolean crear(Entidad e)`
+   - `Optional<Entidad> buscarPorId(int id)`
+   - `Entidad actualizar(Entidad e)`
+   - `boolean eliminar(int id)` ← **Recibe ID, no objeto completo**
+3. **Implementa la interfaz** en `dao/` usando EntityManager
+4. **Actualiza App.java** agregando el DAO y pruebas de la entidad
+5. **Ejecuta y verifica** que todo funciona correctamente
 
-El proyecto Usuario ya te sirve como plantilla completa. Simplemente replica la estructura cambiando los nombres y atributos según cada tabla.
+### Recordatorios importantes:
+
+✅ **Tu estilo de código es válido** - Variables cortas (`Autor a`, `Categoria cat`), métodos con nombre de entidad
+✅ **Diferencia con el profesor** - Él usa `crear()`, `actualizar()`, `eliminar(int id)` sin nombre de entidad
+✅ **Decisión sobre el método eliminar** - Puedes mantener `eliminarAutor(Autor a)` o cambiar a `eliminar(int id)` como el profesor
+✅ **ENUMs dentro de la clase** de la entidad (EstadoEjemplar, EstadoPrestamo) - sigue al profesor en esto
+✅ **Claves foráneas como Integer** con `@Column`, no `@ManyToOne`
+✅ **Desarrollo progresivo de App.java** sin necesidad de comentar código
+✅ **Constructor vacío obligatorio** en todas las entidades
+✅ **Try-with-resources** para EntityManager en App.java
+✅ **Usa `EntityTransaction tran`** (tu estilo) no `tx` (del profesor)
+
+**Tu proyecto Usuario y Autor ya te sirven como plantilla completa.** Simplemente replica TU PROPIA estructura cambiando los nombres y atributos según cada tabla. Los ejemplos en esta guía usan tu estilo de variables y nombres de métodos.
 
 ---
 

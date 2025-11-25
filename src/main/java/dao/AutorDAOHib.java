@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import modelo.Autor;
 
-import java.security.PrivateKey;
 import java.util.Optional;
 
 public class AutorDAOHib implements AutorDAO{
