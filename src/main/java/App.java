@@ -1,14 +1,7 @@
-import dao.AutorDAO;
-import dao.AutorDAOHib;
-import dao.PrestamoDAO;
-import dao.PrestamoDAOHib;
-import dao.UsuarioDAO;
-import dao.UsuarioDAOHib;
+import dao.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Persistence;
-import modelo.Autor;
-import modelo.Prestamo;
-import modelo.Usuario;
+import modelo.*;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.util.Optional;
@@ -24,7 +17,10 @@ public class App {
                 .createEntityManager()){
             UsuarioDAO usuarioDAO = new UsuarioDAOHib(em);
             AutorDAO autorDAO = new AutorDAOHib(em);
+            CategoriaDAO categoriaDAO = new CategoriaDAOHib(em);
+            LibroDAO libroDAO = new LibroDAOHib(em);
             PrestamoDAO prestamoDAO = new PrestamoDAOHib(em);
+            EjemplarDAO ejemplarDAO = new EjemplarDAOHib(em);
 
 
             Optional<Usuario> usuarioOptional = usuarioDAO.buscarPorId(1);
@@ -43,6 +39,22 @@ public class App {
                 System.out.println("====AUTOR NO ENCONTRADO====");
             }
 
+            Optional<Categoria> categoriaOptinal = categoriaDAO.buscarPorId(3);
+            if(categoriaOptinal.isPresent()){
+                System.out.println("====CATEGORIA ENCONTRADO====");
+                System.out.println(categoriaOptinal.get());
+            } else {
+                System.out.println("====CATEGORIA NO ENCONTRADO====");
+            }
+
+            Optional<Libro> libroOptional = libroDAO.buscarPorId(1);
+            if(libroOptional.isPresent()){
+                System.out.println("====LIBRO ENCONTRADO====");
+                System.out.println(libroOptional.get());
+            } else {
+                System.out.println("====LIBRO NO ENCONTRADO====");
+            }
+
             Optional<Prestamo> prestamoOptional = prestamoDAO.buscarPorId(1);
             if(prestamoOptional.isPresent()){
                 System.out.println("====PRESTAMO ENCONTRADO====");
@@ -53,6 +65,14 @@ public class App {
                 System.out.println("Usuario ID: " + prestamoOptional.get().getUsuario().getId());
             }else {
                 System.out.println("====PRESTAMO NO ENCONTRADO====");
+            }
+
+            Optional<Ejemplar> ejemplarOptional = ejemplarDAO.buscarPorId(1);
+            if(ejemplarOptional.isPresent()){
+                System.out.println("====EJEMPLAR ENCONTRADO====");
+                System.out.println(ejemplarOptional.get());
+            } else {
+                System.out.println("====EJEMPLAR NO ENCONTRADO====");
             }
 
             System.out.println("Programa de prueba finalizado");
