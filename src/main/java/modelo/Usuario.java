@@ -34,6 +34,9 @@ public class Usuario {
     @Column(name = "fecha_registro")
     private LocalDateTime fecha_registro;
 
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private Prestamo prestamo;
+
     public Usuario(String dni, String nombre, String apellidos, String email) {
         this.dni = dni;
         this.nombre = nombre;
@@ -108,6 +111,14 @@ public class Usuario {
         this.fecha_registro = fecha_registro;
     }
 
+    public Prestamo getPrestamo() {
+        return prestamo;
+    }
+
+    public void setPrestamo(Prestamo prestamo) {
+        this.prestamo = prestamo;
+    }
+
     @Override
     public String toString() {
         return "Usuario{" +
@@ -119,6 +130,7 @@ public class Usuario {
                 ", telefono='" + telefono + '\'' +
                 ", fecha_nacimiento=" + fecha_nacimiento +
                 ", fecha_registro=" + fecha_registro +
+                ", prestamoId" + this.prestamo.getId() +
                 '}';
     }
 }

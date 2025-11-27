@@ -21,8 +21,12 @@ public class Ejemplar {
     @Column (name = "ubicacion", length = 100)
     private String ubicacion;
 
-    @Column (name = "libro_id", nullable = false)
-    private int libro_id;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn (name = "libro_id", nullable = false)
+    private Libro libro;
+
+    @OneToOne(mappedBy = "ejemplar", cascade = CascadeType.ALL)
+    private Prestamo prestamo;
 
     public enum EstadoEjemplar {DISPONIBLE, PRESTADO, MANTENIMIENTO}
 
@@ -30,12 +34,12 @@ public class Ejemplar {
 
     }
 
-    public Ejemplar(int id, String codigo, EstadoEjemplar estado, String ubicacion, int libro_id) {
+    public Ejemplar(int id, String codigo, EstadoEjemplar estado, String ubicacion, Libro libro) {
         this.id = id;
         this.codigo = codigo;
         this.estado = estado;
         this.ubicacion = ubicacion;
-        this.libro_id = libro_id;
+        this.libro = libro;
     }
 
     public int getId() {
@@ -70,12 +74,20 @@ public class Ejemplar {
         this.ubicacion = ubicacion;
     }
 
-    public int getLibro_id() {
-        return libro_id;
+    public Libro getLibro() {
+        return libro;
     }
 
-    public void setLibro_id(int libro_id) {
-        this.libro_id = libro_id;
+    public void setLibro(Libro libro) {
+        this.libro = libro;
+    }
+
+    public Prestamo getPrestamo() {
+        return prestamo;
+    }
+
+    public void setPrestamo(Prestamo prestamo) {
+        this.prestamo = prestamo;
     }
 
     @Override
@@ -85,7 +97,8 @@ public class Ejemplar {
                 ", codigo='" + codigo + '\'' +
                 ", estado=" + estado +
                 ", ubicacion='" + ubicacion + '\'' +
-                ", libro_id=" + libro_id +
+                ", libro=" + libro +
+                ", prestamosID=" + this.prestamo.getId() +
                 '}';
     }
 }

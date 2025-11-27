@@ -24,33 +24,34 @@ public class Prestamo {
     @Column(name = "estado", nullable = false)
     private EstadoPrestamo estado = EstadoPrestamo.ACTIVO;
 
-    // Relación @OneToOne con Usuario - LAZY: carga el Usuario solo cuando lo accedes
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @Column(name = "ejemplar_id", nullable = false)
-    private int ejemplarId;
+//    @OneToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "ejemplar_id", nullable = false)
+//    private Ejemplar ejemplar;
 
-    // Enum dentro de la clase (como hace el profesor)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ejemplar_id", nullable = false)
+    private Ejemplar ejemplar;
+
     public enum EstadoPrestamo {
         ACTIVO, DEVUELTO, RETRASADO
     }
 
-    // Constructor vacío - OBLIGATORIO
     public Prestamo() {
     }
 
-    // Constructor con parámetros
     public Prestamo(int id, LocalDate fechaInicio, LocalDate fechaFin, LocalDate fechaDevolucion,
-                    EstadoPrestamo estado, Usuario usuario, int ejemplarId) {
+                    EstadoPrestamo estado, Usuario usuario, Ejemplar ejemplar) {
         this.id = id;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.fechaDevolucion = fechaDevolucion;
         this.estado = estado;
         this.usuario = usuario;
-        this.ejemplarId = ejemplarId;
+        this.ejemplar = ejemplar;
     }
 
     // Getters y Setters
@@ -102,12 +103,12 @@ public class Prestamo {
         this.usuario = usuario;
     }
 
-    public int getEjemplarId() {
-        return ejemplarId;
+    public Ejemplar getEjemplar() {
+        return ejemplar;
     }
 
-    public void setEjemplarId(int ejemplarId) {
-        this.ejemplarId = ejemplarId;
+    public void setEjemplar(Ejemplar ejemplar) {
+        this.ejemplar = ejemplar;
     }
 
     @Override
@@ -119,7 +120,7 @@ public class Prestamo {
                 ", fechaDevolucion=" + fechaDevolucion +
                 ", estado=" + estado +
                 ", usuarioId=" + this.usuario +
-                ", ejemplarId=" + ejemplarId +
+                ", ejemplarId=" + ejemplar +
                 '}';
     }
 }

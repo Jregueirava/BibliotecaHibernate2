@@ -55,25 +55,57 @@ public class App {
                 System.out.println("====LIBRO NO ENCONTRADO====");
             }
 
+            System.out.println("==== Ejercicio 1 con LAZY ====");
             Optional<Prestamo> prestamoOptional = prestamoDAO.buscarPorId(1);
             if(prestamoOptional.isPresent()){
+                Prestamo p = prestamoOptional.get();
                 System.out.println("====PRESTAMO ENCONTRADO====");
                 System.out.println("Antes de acceder al prestamo:");
-                System.out.println("Class: " + prestamoOptional.get().getUsuario().getClass());
-                System.out.println(prestamoOptional.get());
+                System.out.println("Ejmplar class: " +  p.getEjemplar().getClass());
+                System.out.println(p);
                 System.out.println("Después de acceder al prestamo:");
-                System.out.println("Usuario ID: " + prestamoOptional.get().getUsuario().getId());
+                System.out.println("UCódigo ejemplar: " + p.getEjemplar().getCodigo());
+                System.out.println("====Fin de Prestamo ENCONTRADO====");
             }else {
                 System.out.println("====PRESTAMO NO ENCONTRADO====");
             }
 
-            Optional<Ejemplar> ejemplarOptional = ejemplarDAO.buscarPorId(1);
+            System.out.println("====== Prueba de Prestamos y Ejemplar Bidireccional ======");
+            Optional<Ejemplar>  ejemplarOptional = ejemplarDAO.buscarPorId(1);
             if(ejemplarOptional.isPresent()){
                 System.out.println("====EJEMPLAR ENCONTRADO====");
                 System.out.println(ejemplarOptional.get());
             } else {
                 System.out.println("====EJEMPLAR NO ENCONTRADO====");
             }
+
+
+//            System.out.println("==== Ejercicio 2 con LAZY ====");
+//            Optional<Ejemplar> ejemplarOptional = ejemplarDAO.buscarPorId(1);
+//            if(ejemplarOptional.isPresent()){
+//                Ejemplar e = ejemplarOptional.get();
+//                System.out.println("====Ejemplar ENCONTRADO====");
+//                System.out.println("Antes de acceder al libro:");
+//                System.out.println("Libro class: " +  e.getLibro().getClass());
+//                System.out.println(e);
+//                System.out.println("Después de acceder al libro:");
+//                System.out.println("Título libro: " +  e.getLibro().getTitulo());
+//
+//                System.out.println(ejemplarOptional.get());
+//            } else {
+//                System.out.println("====Ejemplar NO ENCONTRADO====");
+//            }
+
+//            Optional<Usuario> usuarioOptional = usuarioDAO.buscarPorId(1);
+//            if(usuarioOptional.isPresent()){
+//                Usuario u = usuarioOptional.get();
+//                System.out.println("====USUARIO ENCONTRADO====");
+//                System.out.println(u);
+//                System.out.println("====Fin de Usuario ENCONTRADO====");
+//            }else {
+//                System.out.println("====PRESTAMO NO ENCONTRADO====");
+//            }
+
 
             System.out.println("Programa de prueba finalizado");
         } catch (Exception e) {
