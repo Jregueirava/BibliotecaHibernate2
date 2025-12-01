@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "usuario")
@@ -34,14 +36,23 @@ public class Usuario {
     @Column(name = "fecha_registro")
     private LocalDateTime fecha_registro;
 
-    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private Prestamo prestamo;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Prestamo> prestamos = new ArrayList<>();
+
 
     public Usuario(String dni, String nombre, String apellidos, String email) {
         this.dni = dni;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.email = email;
+    }
+
+    public void agregarPrestamo(Prestamo prestamo) {
+        prestamos.add(prestamo);
+    }
+
+    public void eliminarPrestamo(Prestamo prestamo) {
+        prestamos.remove(prestamo);
     }
 
     public Usuario() {
@@ -111,12 +122,12 @@ public class Usuario {
         this.fecha_registro = fecha_registro;
     }
 
-    public Prestamo getPrestamo() {
-        return prestamo;
+    public List<Prestamo> getPrestamos() {
+        return prestamos;
     }
 
-    public void setPrestamo(Prestamo prestamo) {
-        this.prestamo = prestamo;
+    public void setPrestamos(List<Prestamo> prestamos) {
+        this.prestamos = prestamos;
     }
 
     @Override
@@ -130,7 +141,7 @@ public class Usuario {
                 ", telefono='" + telefono + '\'' +
                 ", fecha_nacimiento=" + fecha_nacimiento +
                 ", fecha_registro=" + fecha_registro +
-                ", prestamoId" + this.prestamo.getId() +
+                ", cantidadPrestamos=" + prestamos.size() +
                 '}';
     }
 }

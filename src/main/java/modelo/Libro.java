@@ -15,37 +15,39 @@ public class Libro {
     @Column(name = "isbn", unique = true, nullable = false, length = 20)
     private String isbn;
 
-    @Column (name = "titulo", nullable = false, length = 200)
+    @Column(name = "titulo", nullable = false, length = 200)
     private String titulo;
 
-    @Column (name = "fecha_publicacion")
+    @Column(name = "fecha_publicacion")
     private LocalDate fecha_publicacion;
 
-    @Column (name = "paginas")
+    @Column(name = "paginas")
     private int paginas;
 
-    @Column (name = "editorial", length = 100)
+    @Column(name = "editorial", length = 100)
     private String editorial;
 
-    @Column (name = "autor_id")
-    private int autor_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "autor_id")
+    private Autor autor;
 
-   @Column (name = "categoria_id")
-    private int categoria_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
 
-   public Libro() {
+    public Libro() {
 
-   }
+    }
 
-    public Libro(int id, String isbn, String titulo, LocalDate fecha_publicacion, int paginas, String editorial, int autor_id, int categoria_id) {
+    public Libro(int id, String isbn, String titulo, LocalDate fecha_publicacion, int paginas, String editorial, Autor autor, Categoria categoria) {
         this.id = id;
         this.isbn = isbn;
         this.titulo = titulo;
         this.fecha_publicacion = fecha_publicacion;
         this.paginas = paginas;
         this.editorial = editorial;
-        this.autor_id = autor_id;
-        this.categoria_id = categoria_id;
+        this.autor = autor;
+        this.categoria = categoria;
     }
 
     public int getId() {
@@ -96,20 +98,20 @@ public class Libro {
         this.editorial = editorial;
     }
 
-    public int getAutor_id() {
-        return autor_id;
+    public Autor getAutor() {
+        return autor;
     }
 
-    public void setAutor_id(int autor_id) {
-        this.autor_id = autor_id;
+    public void setAutor(Autor autor) {
+        this.autor = autor;
     }
 
-    public int getCategoria_id() {
-        return categoria_id;
+    public Categoria getCategoria() {
+        return categoria;
     }
 
-    public void setCategoria_id(int categoria_id) {
-        this.categoria_id = categoria_id;
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
 
     @Override
@@ -121,8 +123,8 @@ public class Libro {
                 ", fecha_publicacion=" + fecha_publicacion +
                 ", paginas=" + paginas +
                 ", editorial='" + editorial + '\'' +
-                ", autor_id=" + autor_id +
-                ", categoria_id=" + categoria_id +
+                ", autor=" + autor.getId() +
+                ", categoria=" + categoria.getId() +
                 '}';
     }
 }

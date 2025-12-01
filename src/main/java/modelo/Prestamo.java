@@ -24,13 +24,9 @@ public class Prestamo {
     @Column(name = "estado", nullable = false)
     private EstadoPrestamo estado = EstadoPrestamo.ACTIVO;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
-
-//    @OneToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "ejemplar_id", nullable = false)
-//    private Ejemplar ejemplar;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ejemplar_id", nullable = false)
@@ -120,7 +116,7 @@ public class Prestamo {
                 ", fechaDevolucion=" + fechaDevolucion +
                 ", estado=" + estado +
                 ", usuarioId=" + this.usuario +
-                ", ejemplarId=" + ejemplar +
+                ", ejemplarId=" + this.ejemplar +
                 '}';
     }
 }
