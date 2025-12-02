@@ -76,6 +76,14 @@ CREATE TABLE prestamo (
     FOREIGN KEY (ejemplar_id) REFERENCES ejemplar(id)
 );
 
+CREATE TABLE favoritos (
+    usuario_id int NOT NULL,
+    libro_id int NOT NULL,
+    PRIMARY KEY (usuario_id, libro_id),
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id),
+    FOREIGN KEY (libro_id) REFERENCES libro(id)
+);
+
 -- Inserción de datos
 
 -- Usuarios
@@ -130,3 +138,10 @@ INSERT INTO prestamo (fecha_inicio, fecha_fin, fecha_devolucion, estado, usuario
 ('2024-01-10', '2024-01-24', '2024-01-23', 'DEVUELTO', 1, 3),
 ('2024-02-01', '2024-02-15', NULL, 'ACTIVO', 2, 6),
 ('2024-01-15', '2024-01-29', '2024-02-01', 'RETRASADO', 3, 1);
+
+
+-- Favoritos
+INSERT INTO favoritos (usuario_id, libro_id) VALUES (1, 3);
+INSERT INTO favoritos (usuario_id, libro_id) VALUES (1, 1);
+INSERT INTO favoritos (usuario_id, libro_id) VALUES (2, 4);
+INSERT INTO favoritos (usuario_id, libro_id) VALUES (2, 5);

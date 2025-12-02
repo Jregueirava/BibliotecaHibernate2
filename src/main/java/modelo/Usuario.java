@@ -39,23 +39,35 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Prestamo> prestamos = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "favoritos",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "libro_id")
+    )
+
+    private List<Libro> librosFavoritos;
+
+    public Usuario() {
+        prestamos = new ArrayList<>();
+        librosFavoritos = new ArrayList<>();
+    }
 
     public Usuario(String dni, String nombre, String apellidos, String email) {
         this.dni = dni;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.email = email;
+        prestamos = new ArrayList<>();
+        this.librosFavoritos = new ArrayList<>();
     }
 
-    public void agregarPrestamo(Prestamo prestamo) {
-        prestamos.add(prestamo);
+    public void agregarPrestamo(Prestamo p) {
+        prestamos.add(p);
     }
 
-    public void eliminarPrestamo(Prestamo prestamo) {
-        prestamos.remove(prestamo);
-    }
-
-    public Usuario() {
+    public void eliminarPrestamo(Prestamo p) {
+        prestamos.remove(p);
     }
 
     public int getId() {
@@ -130,6 +142,29 @@ public class Usuario {
         this.prestamos = prestamos;
     }
 
+    public List<Libro> getLibrosFavoritos() {
+        return librosFavoritos;
+    }
+
+    public void setLibrosFavoritos(List<Libro> librosFavoritos) {
+        this.librosFavoritos = librosFavoritos;
+    }
+
+    public void addFavorito(Libro libro){
+        this.librosFavoritos.add(libro);
+    }
+
+    public void removeFavorito(Libro libro){
+        this.librosFavoritos.remove(libro);
+    }
+    public void addLibro(Libro libro){
+        this.librosFavoritos.add(libro);
+    }
+
+    public void removeLibro(Libro libro) {
+        this.librosFavoritos.remove(libro);
+    }
+
     @Override
     public String toString() {
         return "Usuario{" +
@@ -142,6 +177,7 @@ public class Usuario {
                 ", fecha_nacimiento=" + fecha_nacimiento +
                 ", fecha_registro=" + fecha_registro +
                 ", cantidadPrestamos=" + prestamos.size() +
+                ", cantidadLibros=" + this.librosFavoritos.size() +
                 '}';
     }
 }

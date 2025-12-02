@@ -3,6 +3,8 @@ package modelo;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "libro")
@@ -28,14 +30,19 @@ public class Libro {
     private String editorial;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "autor_id")
+    @JoinColumn(name = "autor_id")
     private Autor autor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
+    @ManyToMany(mappedBy = "librosFavoritos")
+    private List<Usuario> listaUsuariosFavoritos = new ArrayList<>();
+
     public Libro() {
+        this.listaUsuariosFavoritos = new ArrayList<>();
+
 
     }
 
@@ -48,6 +55,7 @@ public class Libro {
         this.editorial = editorial;
         this.autor = autor;
         this.categoria = categoria;
+        this.listaUsuariosFavoritos = new ArrayList<>();
     }
 
     public int getId() {
@@ -114,6 +122,22 @@ public class Libro {
         this.categoria = categoria;
     }
 
+    public List<Usuario> getUsuariosFavoritos() {
+        return listaUsuariosFavoritos;
+    }
+
+    public void setUsuariosFavoritos(List<Usuario> usuariosFavoritos) {
+        this.listaUsuariosFavoritos = usuariosFavoritos;
+    }
+
+    public void addUsuario(Usuario usuario){
+        this.listaUsuariosFavoritos.add(usuario);
+    }
+
+    public void removeUsuario(Usuario usuario){
+        this.listaUsuariosFavoritos.remove(usuario);
+    }
+
     @Override
     public String toString() {
         return "Libro{" +
@@ -125,6 +149,7 @@ public class Libro {
                 ", editorial='" + editorial + '\'' +
                 ", autor=" + autor.getId() +
                 ", categoria=" + categoria.getId() +
+                ", usuariosFavoritos=" + this.listaUsuariosFavoritos.size() +
                 '}';
     }
 }
