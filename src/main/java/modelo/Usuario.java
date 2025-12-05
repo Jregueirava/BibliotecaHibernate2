@@ -46,11 +46,15 @@ public class Usuario {
             inverseJoinColumns = @JoinColumn(name = "libro_id")
     )
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LibroCategoria> valoracionesLibros = new ArrayList<>();
+
     private List<Libro> librosFavoritos;
 
     public Usuario() {
         prestamos = new ArrayList<>();
         librosFavoritos = new ArrayList<>();
+        valoracionesLibros = new ArrayList<>();
     }
 
     public Usuario(String dni, String nombre, String apellidos, String email) {
@@ -163,6 +167,14 @@ public class Usuario {
 
     public void removeLibro(Libro libro) {
         this.librosFavoritos.remove(libro);
+    }
+
+    public List<LibroCategoria> getValoracionesLibros() {
+        return valoracionesLibros;
+    }
+
+    public void setValoracionesLibros(List<LibroCategoria> valoracionesLibros) {
+        this.valoracionesLibros = valoracionesLibros;
     }
 
     @Override

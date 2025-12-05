@@ -84,6 +84,19 @@ CREATE TABLE favoritos (
     FOREIGN KEY (libro_id) REFERENCES libro(id)
 );
 
+
+-- Tabla categoria
+CREATE TABLE libro_categoria (
+    usuario_id INT NOT NULL,
+    libro_id INT NOT NULL,
+    categoria_id INT NOT NULL,
+    puntuacion INT DEFAULT 0 CHECK (puntuacion >= 0 AND puntuacion <= 10),
+    PRIMARY KEY (usuario_id, libro_id, categoria_id),
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id),
+    FOREIGN KEY (libro_id) REFERENCES libro(id),
+    FOREIGN KEY (categoria_id) REFERENCES categoria(id)
+);
+
 -- Inserción de datos
 
 -- Usuarios
@@ -145,3 +158,11 @@ INSERT INTO favoritos (usuario_id, libro_id) VALUES (1, 3);
 INSERT INTO favoritos (usuario_id, libro_id) VALUES (1, 1);
 INSERT INTO favoritos (usuario_id, libro_id) VALUES (2, 4);
 INSERT INTO favoritos (usuario_id, libro_id) VALUES (2, 5);
+
+
+-- libro_categoria inserts
+INSERT INTO libro_categoria (usuario_id, libro_id, categoria_id, puntuacion) VALUES
+(1, 1, 1, 9),
+(1, 3, 3, 10),
+(2, 4, 2, 8),
+(2, 5, 1, 9);
