@@ -2,8 +2,10 @@ package dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.TypedQuery;
 import modelo.Usuario;
 
+import java.util.List;
 import java.util.Optional;
 
 public class UsuarioDAOHib implements UsuarioDAO{
@@ -72,5 +74,20 @@ public class UsuarioDAOHib implements UsuarioDAO{
             }
             throw new RuntimeException("Error al borrar usuario" + e);
         }
+    }
+
+    public Optional<Usuario> findByDni(String dniPar){
+        String jpql = "SELECT u FROM Usuario u WHERE u.dni = :dniPar";
+        TypedQuery<Usuario> query = entityManager.createQuery(jpql, Usuario.class);
+        query.setParameter("dniPar", dniPar);
+        Usuario usr = query.getSingleResult();
+        Optional<Usuario> optUsr = Optional.of(query.getSingleResult());
+        return optUsr;
+    }
+
+    public List<Object[]> favoritosPorUsario(){
+        String jpql = "SELECT u, count(l) FROM Usuario u LEFT JOIN u.librosFavoritos l GROUP BY u";
+        TypedQuery<Object[]> query =  entityManager.createQuery(jpql, Object[].class);
+        return query.getResultList();
     }
 }
